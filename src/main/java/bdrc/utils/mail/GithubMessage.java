@@ -27,7 +27,7 @@ public class GithubMessage {
 
     static {
         try {
-            FileInputStream stream=new FileInputStream(System.getProperty("mailConfigPath")+"mail.properties");
+            FileInputStream stream=new FileInputStream(System.getProperty("mail.configpath")+"mail.properties");
             props=new Properties();
             props.load(stream);
             stream.close();
@@ -73,7 +73,6 @@ public class GithubMessage {
         res=res+TAB+"added: "+node.findValue("head_commit").findValue("added").toString()+System.lineSeparator();
         res=res+TAB+"removed: "+node.findValue("head_commit").findValue("removed").toString()+System.lineSeparator();
         res=res+TAB+"modified: "+node.findValue("head_commit").findValue("modified").toString()+System.lineSeparator();
-        System.out.println(res);
         return res;
     }
 

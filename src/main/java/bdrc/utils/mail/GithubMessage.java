@@ -27,7 +27,7 @@ public class GithubMessage {
 
     static {
         try {
-            FileInputStream stream=new FileInputStream(System.getProperty("mail.configpath")+"mail.properties");
+            FileInputStream stream=new FileInputStream(System.getProperty("githubmail.configpath")+"mail.properties");
             props=new Properties();
             props.load(stream);
             stream.close();

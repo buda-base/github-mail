@@ -1,2 +1,2 @@
 # github-mail
-A service that sends emails to be used by github webhooks
+A simple servlet that sends emails, trigerred by github webhooks

@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -21,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class GithubMessage {
 
     private static Properties props=null;
-    private Message message;
+    private MimeMessage message;
     private String repo;
     public static String TAB="\t";
 
@@ -43,23 +42,33 @@ public class GithubMessage {
     public GithubMessage(String json) throws AddressException, MessagingException, IOException {
         ObjectMapper mapper=new ObjectMapper();
         JsonNode node=mapper.readTree(json);
-        final Properties p=props;
-        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                  return new PasswordAuthentication(p.getProperty("mail.user"), p.getProperty("mail.password"));
-            }
-        });
         String msg=parsePayload(node);
+        System.out.println(props);
+
+        // USING SIMPLE MAIL
+        /*Email email=null;
+        EmailPopulatingBuilder p=EmailBuilder.startingBlank()
+                .appendText(msg)
+                .from(new InternetAddress(props.getProperty("mail.user"),"BDRC Github Notification"))
+                .to(InternetAddress.parse(props.getProperty("recipients"))[0]);
+        email=p.buildEmail();
+        //MailerBuilder.withSMTPServer("smtp.gmail.com", 587, "testbdrc@gmail.com", "testbdrc2018")
+        MailerBuilder.withSMTPServer("smtp.gmail.com", 587, "budadev@tbrc.org", "jdfghdfgidfhgidfgh")
+        .withTransportStrategy(TransportStrategy.SMTP_TLS)
+        .buildMailer()
+        .sendMail(email);*/
+
+        // USING JAVAX MAIL
+        Session session = Session.getInstance(props);
         message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("tbrctest@gmail.com"));
+        message.setFrom(new InternetAddress(props.getProperty("mail.user"),"BDRC Github Notification"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(props.getProperty("recipients")));
         message.setSubject("Github repo "+repo+ " update");
         message.setContent(msg, "text/plain");
     }
 
     public void send() throws MessagingException {
-      Transport.send(message);
+      Transport.send(message, props.getProperty("mail.user"), props.getProperty("mail.password"));
     }
 
     private String parsePayload(JsonNode node) {
@@ -83,6 +92,7 @@ public class GithubMessage {
         JsonNode node=mapper.readTree(stream);
         stream.close();
         GithubMessage msg=new GithubMessage(node.toString());
+        msg.send();
         System.out.println("done");
     }
 }

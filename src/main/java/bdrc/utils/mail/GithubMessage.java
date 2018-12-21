@@ -23,6 +23,7 @@ public class GithubMessage {
     private MimeMessage message;
     private String repo;
     public static String TAB="\t";
+    String authorEmail="";
 
     static {
         try {
@@ -43,28 +44,15 @@ public class GithubMessage {
         ObjectMapper mapper=new ObjectMapper();
         JsonNode node=mapper.readTree(json);
         String msg=parsePayload(node);
-        System.out.println(props);
-
-        // USING SIMPLE MAIL
-        /*Email email=null;
-        EmailPopulatingBuilder p=EmailBuilder.startingBlank()
-                .appendText(msg)
-                .from(new InternetAddress(props.getProperty("mail.user"),"BDRC Github Notification"))
-                .to(InternetAddress.parse(props.getProperty("recipients"))[0]);
-        email=p.buildEmail();
-        //MailerBuilder.withSMTPServer("smtp.gmail.com", 587, "testbdrc@gmail.com", "testbdrc2018")
-        MailerBuilder.withSMTPServer("smtp.gmail.com", 587, "budadev@tbrc.org", "jdfghdfgidfhgidfgh")
-        .withTransportStrategy(TransportStrategy.SMTP_TLS)
-        .buildMailer()
-        .sendMail(email);*/
-
-        // USING JAVAX MAIL
         Session session = Session.getInstance(props);
         message = new MimeMessage(session);
         message.setFrom(new InternetAddress(props.getProperty("mail.user"),"BDRC Github Notification"));
+        message.setSender(new InternetAddress(authorEmail,"BDRC Github Notification"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(props.getProperty("recipients")));
         message.setSubject("Github repo "+repo+ " update");
+        message.setReplyTo(InternetAddress.parse(authorEmail));
         message.setContent(msg, "text/plain");
+
     }
 
     public void send() throws MessagingException {
@@ -72,6 +60,7 @@ public class GithubMessage {
     }
 
     private String parsePayload(JsonNode node) {
+        authorEmail=node.findValue("head_commit").findValue("author").findValue("email").asText();
         String res="";
         repo=node.findValue("repository").findValue("full_name").textValue();
         res=System.lineSeparator()+"head_commit :"+System.lineSeparator();

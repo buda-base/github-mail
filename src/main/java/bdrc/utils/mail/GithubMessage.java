@@ -6,22 +6,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.sargue.mailgun.Configuration;
+import net.sargue.mailgun.Mail;
+import net.sargue.mailgun.MailBuilder;
 
 public class GithubMessage {
 
     private static Properties props=null;
-    private MimeMessage message;
     private String repo;
+    private Mail mail;
     public static String TAB="\t";
     String authorEmail="";
 
@@ -40,23 +36,28 @@ public class GithubMessage {
         }
     }
 
-    public GithubMessage(String json) throws AddressException, MessagingException, IOException {
+    public GithubMessage(String json) throws IOException {
         ObjectMapper mapper=new ObjectMapper();
         JsonNode node=mapper.readTree(json);
         String msg=parsePayload(node);
-        Session session = Session.getInstance(props);
-        message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(props.getProperty("mail.user"),"BDRC Github Notification"));
-        message.setSender(new InternetAddress(authorEmail,"BDRC Github Notification"));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(props.getProperty("recipients")));
-        message.setSubject("Github repo "+repo+ " update");
-        message.setReplyTo(InternetAddress.parse(authorEmail));
-        message.setContent(msg, "text/plain");
+        String[] recip=props.getProperty("recipients").split(",");
+        Configuration configuration = new Configuration()
+                .domain(props.getProperty("mail.domain"))
+                .apiKey(props.getProperty("mail.key"));
+        MailBuilder build=Mail.using(configuration);
+        for(String s:recip) {
+            build=build.to(s);
+        }
+        build.from(node.findValue("head_commit").findValue("author").findValue("name").asText(),node.findValue("head_commit").findValue("author").findValue("email").asText())
+        .replyTo(node.findValue("head_commit").findValue("author").findValue("email").asText())
+        .subject("Github repo "+repo+ " update")
+        .text(msg);
+        this.mail=build.build();
 
     }
 
-    public void send() throws MessagingException {
-      Transport.send(message, props.getProperty("mail.user"), props.getProperty("mail.password"));
+    public void send() {
+      this.mail.send();
     }
 
     private String parsePayload(JsonNode node) {
@@ -74,8 +75,7 @@ public class GithubMessage {
         return res;
     }
 
-    public static void main(String[] args) throws IOException, AddressException, MessagingException {
-
+    public static void main(String[] args) throws IOException {
         InputStream stream = GithubMessage.class.getClassLoader().getResourceAsStream("payload.json.txt");
         ObjectMapper mapper=new ObjectMapper();
         JsonNode node=mapper.readTree(stream);

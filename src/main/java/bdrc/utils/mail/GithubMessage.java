@@ -50,7 +50,7 @@ public class GithubMessage {
         }
         build.from(node.findValue("head_commit").findValue("author").findValue("name").asText(),node.findValue("head_commit").findValue("author").findValue("email").asText())
         .replyTo(node.findValue("head_commit").findValue("author").findValue("email").asText())
-        .subject("["+repo+ "] "+node.findValue("head_commit").findValue("id").asText().substring(0, 8)+": "+node.findValue("head_commit").findValue("message").asText())
+        .subject("["+repo+ "] "+node.findValue("head_commit").findValue("id").asText().substring(0, 7)+": "+node.findValue("head_commit").findValue("message").asText())
         .text(msg);
         this.mail=build.build();
 

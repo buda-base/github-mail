@@ -48,9 +48,10 @@ public class GithubMessage {
         for(String s:recip) {
             build=build.to(s);
         }
+        String subject=node.findValue("head_commit").findValue("message").asText().split(System.lineSeparator())[0];
         build.from(node.findValue("head_commit").findValue("author").findValue("name").asText(),node.findValue("head_commit").findValue("author").findValue("email").asText())
         .replyTo(node.findValue("head_commit").findValue("author").findValue("email").asText())
-        .subject("["+repo+ "] "+node.findValue("head_commit").findValue("id").asText().substring(0, 7)+": "+node.findValue("head_commit").findValue("message").asText())
+        .subject("["+repo+ "] "+node.findValue("head_commit").findValue("id").asText().substring(0, 7)+": "+subject)
         .text(msg);
         this.mail=build.build();
 

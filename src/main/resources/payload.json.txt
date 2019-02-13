@@ -40,7 +40,7 @@
     "id": "04fdb0f2d199d64a9b94193063f1ce5bff32f26e",
     "tree_id": "9a64cfd3b0bc17ca2a22770e9f2654ec2dc294ac",
     "distinct": true,
-    "message": "Update Resgraph.arq",
+    "message": "separate core into core, core/owl, and core/shapes.\n\nThis follows the pattern suggested in\nhttp://spinrdf.org/shacl-and-owl.html\n\ncore is the file bdo.ttl, which is not tagged as an owl:ontology\ncore/owl is bdo.owl.ttl, tagged owl:ontology, imports core\ncore/shapes is bdo.shapes.ttl, tagged owl:ontology, imports core\n\nThe files can be opened in TopBraid Composer\n\nbdo.ttl is just the bdo.owl in ttl without any owl axioms or shapes\n\nbdo.owl.ttl has the single owl axiom for bdo:AgentAsCreator\n\nbdo.shapes.ttl has shapes bds:EntityShape and bds:WorkShape\n\nThe file bdo.owl remains as it has been and shouldn't be updated further\nif we're going to be using shacl and such\n\nI haven't touched global.owl but it should probably import bdo.ttl if\nthat works with our tooling\n\nThe bdo.owl.ttl should be openable in protege but not the\nbdo.shapes.ttl. TopBraid Composer FE and SE both can work with the\nvarious ttl files.",
     "timestamp": "2018-12-12T14:54:14+01:00",
     "url": "https://github.com/buda-base/lds-queries/commit/04fdb0f2d199d64a9b94193063f1ce5bff32f26e",
     "author": {

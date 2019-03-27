@@ -62,6 +62,7 @@ public class GithubMessage {
         String res = "";
         repo = node.findValue("repository").findValue("full_name").textValue();
         res = System.lineSeparator() + "head_commit :" + System.lineSeparator();
+        res = res + TAB + "branch : " + node.findValue("ref").asText() + System.lineSeparator();
         res = res + TAB + "message: " + node.findValue("head_commit").findValue("message").asText() + System.lineSeparator();
         res = res + TAB + "timestamp: " + node.findValue("head_commit").findValue("timestamp").asText() + System.lineSeparator();
         res = res + TAB + "url: " + node.findValue("head_commit").findValue("url").asText() + System.lineSeparator();

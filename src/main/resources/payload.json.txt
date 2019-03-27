@@ -29,6 +29,9 @@
 
       ],
       "removed": [
+        "public/tibcolldemo2.json",
+        "src/lib/miradorSetup.js",
+        "yarn.lock"
 
       ],
       "modified": [
@@ -57,7 +60,9 @@
 
     ],
     "removed": [
-
+        "public/tibcolldemo2.json",
+        "src/lib/miradorSetup.js",
+        "yarn.lock"
     ],
     "modified": [
       "public/Resgraph.arq"

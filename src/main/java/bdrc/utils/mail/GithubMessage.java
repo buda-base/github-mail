@@ -23,7 +23,10 @@ public class GithubMessage {
 
     private void init() {
         try {
-            FileInputStream stream = new FileInputStream(System.getProperty("githubmail.configpath") + "mail.properties");
+            // FileInputStream stream = new
+            // FileInputStream(System.getProperty("githubmail.configpath") +
+            // "mail.properties");
+            FileInputStream stream = new FileInputStream("/etc/buda/githubmail/mail.properties");
             props = new Properties();
             props.load(stream);
             stream.close();

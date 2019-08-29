@@ -46,7 +46,6 @@ public class GithubMessage {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(json);
         String msg = parsePayload(node);
-        System.out.println("PROPS >>" + props);
         String[] recip = props.getProperty("recipients").split(",");
         Configuration configuration = new Configuration().domain(props.getProperty("mail.domain")).apiKey(props.getProperty("mail.key"));
         MailBuilder build = Mail.using(configuration);

@@ -21,7 +21,7 @@ public class GithubMessage {
     public static String TAB = "\t";
     String authorEmail = "";
 
-    static {
+    private void init() {
         try {
             FileInputStream stream = new FileInputStream(System.getProperty("githubmail.configpath") + "mail.properties");
             props = new Properties();
@@ -37,9 +37,13 @@ public class GithubMessage {
     }
 
     public GithubMessage(String json) throws IOException {
+        if (props == null) {
+            init();
+        }
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(json);
         String msg = parsePayload(node);
+        System.out.println("PROPS >>" + props);
         String[] recip = props.getProperty("recipients").split(",");
         Configuration configuration = new Configuration().domain(props.getProperty("mail.domain")).apiKey(props.getProperty("mail.key"));
         MailBuilder build = Mail.using(configuration);

@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,12 +23,14 @@ public class GithubMessage {
     private Mail mail;
     public static String TAB = "\t";
     String authorEmail = "";
+    public final static Logger log = LoggerFactory.getLogger(GithubMessage.class.getName());
 
     private void init() {
         try {
             // FileInputStream stream = new
             // FileInputStream(System.getProperty("githubmail.configpath") +
             // "mail.properties");
+            log.info("Configpath >>" + System.getProperty("githubmail.configpath"));
             FileInputStream stream = new FileInputStream("/etc/buda/githubmail/mail.properties");
             props = new Properties();
             props.load(stream);

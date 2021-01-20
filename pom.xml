@@ -8,7 +8,7 @@
   <name>github-mail Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <properties>
-        <jackson.version>2.9.7</jackson.version>
+        <jackson.version>2.12.1</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
